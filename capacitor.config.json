@@ -1,0 +1,9 @@
+{
+  "appId": "com.dcastrolabs.rivo",
+  "appName": "RIVO",
+  "webDir": "www",
+  "backgroundColor": "#0c0e11",
+  "server": {
+    "androidScheme": "http"
+  }
+}

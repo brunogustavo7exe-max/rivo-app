@@ -1,0 +1,16 @@
+{
+  "name": "RIVO · Entregas e transporte",
+  "short_name": "RIVO",
+  "description": "Entregas e transporte — D'Castro Labs",
+  "start_url": "./rivo.html",
+  "scope": "./rivo.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c0e11",
+  "theme_color": "#0c0e11",
+  "icons": [
+    {"src": "rivo-icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "rivo-icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "rivo-icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
