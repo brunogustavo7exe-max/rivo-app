@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1094898876094",
+    "project_id": "rivo-d9148",
+    "storage_bucket": "rivo-d9148.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094898876094:android:c79f1e9f75bdf1a5ae28ef",
+        "android_client_info": {
+          "package_name": "com.dcastrolabs.rivo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxVQmoSeDCIBnVDLDf8RkK_K1qGAjR-84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
