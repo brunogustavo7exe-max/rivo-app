@@ -20,7 +20,7 @@ jobs:
       - name: Permissões (localização, notificações, alerta em tela cheia)
         run: |
           M=android/app/src/main/AndroidManifest.xml
-          for P in ACCESS_COARSE_LOCATION ACCESS_FINE_LOCATION ACCESS_BACKGROUND_LOCATION FOREGROUND_SERVICE FOREGROUND_SERVICE_LOCATION FOREGROUND_SERVICE_MEDIA_PLAYBACK POST_NOTIFICATIONS WAKE_LOCK USE_FULL_SCREEN_INTENT VIBRATE REQUEST_IGNORE_BATTERY_OPTIMIZATIONS; do
+          for P in ACCESS_COARSE_LOCATION ACCESS_FINE_LOCATION ACCESS_BACKGROUND_LOCATION FOREGROUND_SERVICE FOREGROUND_SERVICE_LOCATION FOREGROUND_SERVICE_MEDIA_PLAYBACK POST_NOTIFICATIONS WAKE_LOCK USE_FULL_SCREEN_INTENT VIBRATE REQUEST_IGNORE_BATTERY_OPTIMIZATIONS REQUEST_INSTALL_PACKAGES; do
             grep -q "android.permission.$P" $M || sed -i "s#</manifest>#    <uses-permission android:name=\"android.permission.$P\" />\n</manifest>#" $M
           done
           grep -n "permission" $M
@@ -92,6 +92,17 @@ jobs:
           grep -c "'${{ github.run_number }}'" www/rivo.html
           cp www/rivo.html www/index.html
       - run: npx cap sync android
+      - name: Assinatura fixa (para o app atualizar por cima, sem desinstalar)
+        env:
+          KS: ${{ secrets.RIVO_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KS" ]; then
+            mkdir -p ~/.android
+            echo "$KS" | base64 -d > ~/.android/debug.keystore
+            echo "Assinatura fixa ligada."
+          else
+            echo "ATENCAO: sem o segredo RIVO_KEYSTORE_B64; o APK sai com assinatura nova e não atualiza por cima do antigo."
+          fi
       - name: Compilar
         working-directory: android
         run: ./gradlew assembleDebug
@@ -100,6 +111,10 @@ jobs:
         with:
           name: rivo-apk
           path: rivo.apk
+      - name: Apagar a release antiga (o arquivo sempre sai novo)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete apk-latest --cleanup-tag --yes || true
       - name: Publicar link direto (Releases)
         uses: softprops/action-gh-release@v2
         with:
@@ -107,4 +122,5 @@ jobs:
           name: RIVO APK (mais recente)
           files: rivo.apk
           body: "build ${{ github.run_number }}"
+          overwrite_files: true
           make_latest: true
