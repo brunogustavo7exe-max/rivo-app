@@ -187,7 +187,7 @@ html{scrollbar-color:#ffe600 #0c0e11;scrollbar-width:thin}
 <div id="upd" hidden role="alertdialog" aria-labelledby="updt"><img id="updl" alt="">
 <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true"><rect x="34" y="8" width="52" height="96" rx="10" fill="none" stroke="currentColor" stroke-width="4" style="color:var(--ln)"/><circle cx="60" cy="94" r="3" fill="currentColor" style="color:var(--ln)"/><circle cx="60" cy="50" r="24" fill="var(--cy)"/><path d="M60 38v20m0 0-9-9m9 9 9-9" stroke="#031526" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
 <h2 id="updt">Atualize o RIVO</h2><p>Saiu uma versão nova do app. Para continuar recebendo chamadas e alertas, baixe e instale a atualização.</p>
-<button class="btn p big" id="updb" type="button">Baixar atualização</button><small id="updv"></small></div>
+<button class="btn p big" id="updb" type="button">Atualizar agora</button><small id="updv"></small></div>
 <script>
 (function(){'use strict';
 var $=function(s){return document.querySelector(s)};
@@ -1178,9 +1178,28 @@ var BUILD='__BUILD__',REPO='brunogustavo7exe-max/rivo-app',APK='https://github.c
 window.RIVO_BUILD=meu||0;
 if(!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform())||!(meu>0))return;
 var u=document.getElementById('upd');
-document.getElementById('updb').onclick=function(){window.open(APK,'_blank')};
-function mostrar(novo){var w=document.querySelector('.top .w');if(w)document.getElementById('updl').src=w.src;document.getElementById('updv').textContent='Sua versão: '+meu+' · Nova: '+novo;u.hidden=false}
-function checar(){if(Date.now()-ult<120000)return;ult=Date.now();
+var R=null,bt=document.getElementById('updb'),vv=document.getElementById('updv'),novoN=0,rodando=false,pronto=false;
+try{R=Capacitor.Plugins&&Capacitor.Plugins.RivoNative||null}catch(e){}
+function info(){vv.textContent='Sua versão: '+meu+(novoN?' · Nova: '+novoN:'')}
+function msg(t){vv.textContent=t}
+function abrirSite(){window.open(APK,'_blank')}
+function iniciar(){
+ if(!R||!R.baixarEInstalar){abrirSite();return}
+ R.podeInstalar().then(function(r){
+  if(!(r&&r.ok)){msg('Falta uma permissão: ligue "Permitir desta fonte" e volte para o RIVO.');R.pedirInstalar().catch(function(){});return}
+  if(rodando)return;rodando=true;bt.disabled=true;bt.textContent='Baixando…';
+  R.baixarEInstalar().catch(function(){rodando=false;bt.disabled=false;bt.textContent='Atualizar agora'})
+ }).catch(abrirSite)}
+if(R&&R.addListener)try{R.addListener('upd',function(d){
+ if(d.st==='baixando'){msg('Baixando… '+d.pct+'%')}
+ else if(d.st==='pronto'){msg('Pronto. Toque em "Atualizar" na tela do Android.');rodando=false;pronto=true;bt.disabled=false;bt.textContent='Instalar de novo'}
+ else if(d.st==='erro'){msg(d.msg||'Não deu certo.');rodando=false;pronto=false;bt.disabled=false;bt.textContent='Tentar de novo'}
+})}catch(e){}
+bt.onclick=iniciar;
+function mostrar(novo){novoN=novo;var w=document.querySelector('.top .w');if(w)document.getElementById('updl').src=w.src;bt.textContent='Atualizar agora';info();u.hidden=false;
+ if(R&&R.podeInstalar)R.podeInstalar().then(function(r){if(r&&r.ok&&!rodando)iniciar()}).catch(function(){})}
+function checar(){if(!u.hidden){if(!pronto&&R&&R.podeInstalar)R.podeInstalar().then(function(r){if(r&&r.ok&&!rodando)iniciar()}).catch(function(){});return}
+ if(Date.now()-ult<120000)return;ult=Date.now();
  fetch('https://api.github.com/repos/'+REPO+'/releases/tags/apk-latest',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
   var m=j&&/build\s+(\d+)/i.exec((j.body||'')+' '+(j.name||''));if(m&&parseInt(m[1],10)>meu)mostrar(parseInt(m[1],10))}).catch(function(){})}
 checar();document.addEventListener('visibilitychange',function(){if(!document.hidden)checar()});

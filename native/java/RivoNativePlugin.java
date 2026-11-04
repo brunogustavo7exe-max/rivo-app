@@ -14,6 +14,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -21,6 +22,12 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONObject;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 /** Ponte entre a tela do RIVO (JavaScript) e o Android: push, toque, permissões e login guardado. */
@@ -173,5 +180,94 @@ public class RivoNativePlugin extends Plugin {
                 .putExtra("tipo", "entrega").putExtra("loja", "Teste do RIVO").putExtra("taxa", "800")
                 .putExtra("kmCli", "3.2").putExtra("rid", "teste").putExtra("chave", "teste");
         try { ContextCompat.startForegroundService(getContext(), i); c.resolve(); } catch (Exception e) { c.reject("o Android não deixou iniciar o teste"); }
+    }
+
+    /* ---------- atualização do app: baixa o APK da release e abre o instalador do Android ---------- */
+    private static final String APK_URL = "https://github.com/brunogustavo7exe-max/rivo-app/releases/download/apk-latest/rivo.apk";
+    private volatile boolean baixando = false;
+
+    private boolean podeInstalarApk() {
+        return Build.VERSION.SDK_INT < 26 || getContext().getPackageManager().canRequestPackageInstalls();
+    }
+
+    private void avisarUpd(String st, int pct, String msg) {
+        JSObject o = new JSObject();
+        o.put("st", st);
+        o.put("pct", pct);
+        o.put("msg", msg);
+        notifyListeners("upd", o);
+    }
+
+    @PluginMethod
+    public void podeInstalar(PluginCall c) {
+        JSObject o = new JSObject();
+        o.put("ok", podeInstalarApk());
+        c.resolve(o);
+    }
+
+    /** abre a tela "Instalar apps desconhecidos" do RIVO (o Android exige que a pessoa ligue isso uma vez) */
+    @PluginMethod
+    public void pedirInstalar(PluginCall c) {
+        Context ctx = getContext();
+        Intent i = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + ctx.getPackageName()));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try { ctx.startActivity(i); c.resolve(); } catch (Exception e) { c.reject("não consegui abrir a permissão"); }
+    }
+
+    @PluginMethod
+    public void baixarEInstalar(PluginCall c) {
+        if (!podeInstalarApk()) { c.reject("sem permissão para instalar"); return; }
+        if (baixando) { c.resolve(); return; }
+        baixando = true;
+        c.resolve();
+        final Context ctx = getContext();
+        new Thread(() -> {
+            HttpURLConnection con = null;
+            try {
+                File dir = new File(ctx.getCacheDir(), "update");
+                if (!dir.exists()) dir.mkdirs();
+                final File f = new File(dir, "rivo.apk");
+                if (f.exists()) f.delete();
+                con = (HttpURLConnection) new URL(APK_URL).openConnection();
+                con.setConnectTimeout(15000);
+                con.setReadTimeout(30000);
+                con.setInstanceFollowRedirects(true);
+                if (con.getResponseCode() != 200) throw new IOException("HTTP " + con.getResponseCode());
+                int total = con.getContentLength();
+                InputStream in = con.getInputStream();
+                FileOutputStream out = new FileOutputStream(f);
+                byte[] buf = new byte[32768];
+                long lido = 0;
+                int ultimo = -1, n;
+                while ((n = in.read(buf)) > 0) {
+                    out.write(buf, 0, n);
+                    lido += n;
+                    if (total > 0) {
+                        int pct = (int) (lido * 100 / total);
+                        if (pct != ultimo) { ultimo = pct; avisarUpd("baixando", pct, ""); }
+                    }
+                }
+                out.close();
+                in.close();
+                if (f.length() < 1000000L) throw new IOException("arquivo incompleto");
+                avisarUpd("pronto", 100, "");
+                h.post(() -> {
+                    try {
+                        Uri uri = FileProvider.getUriForFile(ctx, ctx.getPackageName() + ".fileprovider", f);
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setDataAndType(uri, "application/vnd.android.package-archive");
+                        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        ctx.startActivity(i);
+                    } catch (Exception e) {
+                        avisarUpd("erro", 0, "Não consegui abrir o instalador.");
+                    }
+                });
+            } catch (Exception e) {
+                avisarUpd("erro", 0, "Não consegui baixar a atualização. Confira a internet e tente de novo.");
+            } finally {
+                baixando = false;
+                if (con != null) con.disconnect();
+            }
+        }).start();
     }
 }

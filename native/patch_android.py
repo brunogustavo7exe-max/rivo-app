@@ -34,4 +34,17 @@ if 'firebase-messaging' not in s:
 if 'com.google.gms.google-services' not in s:
     s += "\napply plugin: 'com.google.gms.google-services'\n"
 open(a, 'w', encoding='utf-8').write(s)
+
+# 3) FileProvider: deixa o app abrir o APK baixado no instalador do Android
+import os
+m = open('android/app/src/main/AndroidManifest.xml', encoding='utf-8').read()
+if 'fileprovider' not in m.lower():
+    prov = '''        <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
+'''
+    m = m.replace('</application>', prov + '    </application>', 1)
+    open('android/app/src/main/AndroidManifest.xml', 'w', encoding='utf-8').write(m)
+os.makedirs('android/app/src/main/res/xml', exist_ok=True)
+open('android/app/src/main/res/xml/file_paths.xml', 'w', encoding='utf-8').write('<?xml version="1.0" encoding="utf-8"?>\n<paths xmlns:android="http://schemas.android.com/apk/res/android">\n    <external-path name="my_images" path="." />\n    <cache-path name="my_cache_images" path="." />\n</paths>\n')
 print('Patch Android aplicado.')
