@@ -90,6 +90,7 @@ jobs:
         run: |
           sed -i "s/__BUILD__/${{ github.run_number }}/" www/rivo.html
           grep -c "'${{ github.run_number }}'" www/rivo.html
+          cp www/rivo.html www/index.html
       - run: npx cap sync android
       - name: Compilar
         working-directory: android
