@@ -259,8 +259,8 @@ function tkSet(t,keep){try{localStorage.removeItem('mh_tk');sessionStorage.remov
 function api(path,body){var hd={'content-type':'application/json'},t=tk();if(t)hd.authorization='Bearer '+t;var ctl=new AbortController(),to=setTimeout(function(){ctl.abort()},15000);
  return fetch(API+path,{method:body?'POST':'GET',headers:hd,body:body?JSON.stringify(body):undefined,signal:ctl.signal}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){clearTimeout(to);return{ok:r.ok,status:r.status,j:j}})}).catch(function(){clearTimeout(to);return{ok:false,status:0,j:{erro:'Sem conexão com o servidor. Se abriu o arquivo direto do computador, hospede o RIVO em dcastrolabs.com.'}}})}
 function chaveDe(tel,senha){var te=new TextEncoder();return crypto.subtle.importKey('raw',te.encode(senha),'PBKDF2',false,['deriveBits']).then(function(k){return crypto.subtle.deriveBits({name:'PBKDF2',salt:te.encode('mihelp:'+String(tel).trim().replace(/\s+/g,' ').toLowerCase()),iterations:120000,hash:'SHA-256'},k,256)}).then(function(b){return btoa(String.fromCharCode.apply(null,new Uint8Array(b)))})}
-function entrou(nome){ID.ok=1;ID.nome=nome||'';ID.erro='';try{if(nome)localStorage.setItem('rivo_nome',nome)}catch(e){}document.body.classList.remove('deslogado');$('#entrada').textContent='';render()}
-function sair(){if(!confirm('Sair do RIVO?\n\nComo a conta é a mesma, você também sai do MiHelp, do MESA e do DOMIN neste aparelho.'))return;tkSet('');try{localStorage.setItem('rivo_online','0');onlineOff()}catch(e){}ID.ok=0;ID.modo='entrar';ID.erro='';showGate()}
+function entrou(nome){pushInit();ID.ok=1;ID.nome=nome||'';ID.erro='';try{if(nome)localStorage.setItem('rivo_nome',nome)}catch(e){}document.body.classList.remove('deslogado');$('#entrada').textContent='';render()}
+function sair(){if(!confirm('Sair do RIVO?\n\nComo a conta é a mesma, você também sai do MiHelp, do MESA e do DOMIN neste aparelho.'))return;pushSair();tkSet('');try{localStorage.setItem('rivo_online','0');onlineOff()}catch(e){}ID.ok=0;ID.modo='entrar';ID.erro='';showGate()}
 function lf(label,type,key,at){var w=h('label','fld',label),i=document.createElement('input');i.type=type;i.value=ID.f[key];Object.assign(i,at||{});i.oninput=function(){ID.f[key]=i.value};w.append(i);return w}
 function showGate(){document.body.classList.add('deslogado');var box=$('#entrada');box.textContent='';var cr=ID.modo==='criar',f=h('form','lg');f.noValidate=true;
  var w=h('img','lw'),n=h('img','ln');w.alt='';n.alt='RIVO';w.src=LOGO_W;n.src=LOGO_N;
@@ -294,7 +294,7 @@ var LOGIN_ATIVO=true;   /* DESENVOLVIMENTO: troque para true para voltar a exigi
 function start(){if(!LOGIN_ATIVO){ID.ok=1;document.body.classList.remove('deslogado');render();setTimeout(boasVindas,400);return}if(!tk()){showGate();return}
  var c='';try{c=localStorage.getItem('rivo_nome')||''}catch(e){}ID.busy='check';showGate();
  api('/conta/eu').then(function(r){ID.busy=0;
-  if(r.ok&&r.j&&r.j.ok)return entrou(r.j.nome);
+  if(r.ok&&r.j&&r.j.ok){renovaSessao();return entrou(r.j.nome)}
   if(r.status===401){tkSet('');ID.erro='Sua sessão terminou. Entre de novo.';return showGate()}
   if(c)return entrou(c);   /* sem internet: deixa entrar com o último nome conhecido; os dados do RIVO são locais */
   ID.erro=(r.j&&r.j.erro)||'Não consegui verificar sua conta.';showGate()})}
@@ -404,7 +404,7 @@ function notifSetup(){var N=LN();if(!N||CALL.ns)return;CALL.ns=1;try{N.requestPe
 function notifChamada(i){var N=LN();if(!N)return;try{N.schedule({notifications:[{id:Math.floor(Date.now()/1000)%2000000000,title:'🛵 Nova entrega · '+i.loja,body:'Corrida '+R(i.taxa)+(i.kmCli!=null?' · entrega a '+kmTxt(i.kmCli)+' km':'')+'. Toque para abrir.',channelId:'chamadas'}]})}catch(e){}}
 function onlineOn(){notifSetup();if(NATIVE&&bg()){if(CALL.w==null)CALL.w=gpsWatch(function(){},function(){},5000,['RIVO · online','Recebendo chamadas de entrega'])}else if(!CALL.web){CALL.web=1;wakeOn()}}
 function onlineOff(){if(CALL.w!=null){gpsClear(CALL.w);CALL.w=null}if(CALL.web){CALL.web=0;wakeOff()}callFecha()}
-function setOnline(v){try{localStorage.setItem('rivo_online',v?'1':'0')}catch(e){}if(v){onlineOn();mhPoll();mhCarrega();try{chime('entrega')}catch(e){}}else onlineOff();mhDesenha()}
+function setOnline(v){try{localStorage.setItem('rivo_online',v?'1':'0')}catch(e){}pushReg();if(v){onlineOn();mhPoll();mhCarrega();try{chime('entrega')}catch(e){}}else onlineOff();mhDesenha()}
 function ring(){if(!AC||!somOn())return;try{if(AC.state==='suspended')AC.resume();var t=AC.currentTime;[[880,0],[660,.2],[880,.4],[660,.6]].forEach(function(n){var o=AC.createOscillator(),g=AC.createGain(),a=t+n[1];o.type='square';o.frequency.value=n[0];g.gain.setValueAtTime(.0001,a);g.gain.exponentialRampToValueAtTime(.2,a+.02);g.gain.exponentialRampToValueAtTime(.0001,a+.17);o.connect(g);g.connect(AC.destination);o.start(a);o.stop(a+.18)})}catch(x){}try{if(navigator.vibrate)navigator.vibrate([220,90,220,90,320])}catch(x){}}
 function callFecha(){clearInterval(CALL.iv);CALL.iv=null;clearTimeout(CALL.tm);CALL.tm=null;if(CALL.ov){CALL.ov.remove();CALL.ov=null}}
 function chamadaNova(i){if(document.hidden){CALL.vistos[(i.chave||'')+':'+(i.rid||'')]=1;notifChamada(i);return}if(CALL.ov)return;CALL.vistos[(i.chave||'')+':'+(i.rid||'')]=1;chamadaTela(i)}
@@ -454,7 +454,7 @@ function mhCarrega(){if(!tk()||MH.busy)return;MH.busy=1;
   var f=r.j.ativa?api('/rivo/minha'):(r.j.mensalidade.ok?mhPosAgora().then(function(p){return api('/rivo/entregas'+(p?'?lat='+p.lat+'&lng='+p.lng:''))}):Promise.resolve(null));
   return f.then(function(x){MH.busy=0;MH.minha=null;MH.fila=null;MH.precisa=0;
    if(x&&x.ok&&x.j){if(r.j.ativa)MH.minha=x.j.entrega||null;else{MH.fila=x.j.itens||[];if(x.j.tabela)MH.tabela=x.j.tabela}}else if(x&&x.j&&x.j.precisaPerfil)MH.precisa=1;
-   mhGps();mhAviso();mhDesenha()})}).catch(function(){MH.busy=0})}
+   mhGps();mhAviso();mhChatAviso();mhDesenha()})}).catch(function(){MH.busy=0})}
 function mhRivo(v){var b=document.createElement('section');b.id='mhrivo';b.style.cssText='border:1px solid var(--ln);background:var(--sf);border-radius:12px;padding:14px;margin-bottom:14px';v.prepend(b);mhDesenha();
  mhPoll();mhCarrega()}
 function mhMapaLink(q){return'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q)}
@@ -494,6 +494,72 @@ function mhDesenha(){var b=mhBox();if(!b)return;b.textContent='';
  var sb=btn('sm','Som de novos pedidos: '+(somOn()?'ligado':'desligado'),function(){try{localStorage.setItem('rivo_som',somOn()?'0':'1')}catch(e){}if(somOn())chime('entrega');mhDesenha()});sb.style.marginBottom='6px';b.append(sb);
  if(!l.length)b.append(h('p','m','Esta lista atualiza sozinha. Deixe esta tela aberta.'));
  l.forEach(function(i){b.append(mhCartao(i))})}
+/* ===== v39: chat da entrega (cliente · entregador · loja), uma conversa só por entrega ===== */
+function chat39(o) {
+  var C = o.dark ? { bg: '#1b1e24', fg: '#fff', ln: '#555', me: '#2f6f4e', ot: '#2d323b' } : { bg: '#fff', fg: '#111', ln: '#cfd4dc', me: '#2563eb', ot: '#e8ecf2' };
+  var d = document.createElement('dialog'), last = 0, busy = 0, ativo = true, seen = {}, tm = null;
+  d.style.cssText = 'width:min(460px,94vw);padding:12px;border-radius:14px;border:1px solid ' + C.ln + ';background:' + C.bg + ';color:' + C.fg;
+  var el = function (t, css, x) { var e = document.createElement(t); if (css) e.style.cssText = css; if (x != null) e.textContent = x; return e; };
+  var pill = 'padding:6px 12px;border-radius:999px;border:1px solid ' + C.ln + ';background:transparent;color:inherit;font-size:13px;cursor:pointer';
+  var top = el('div', 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px'), fechar = el('button', pill, 'Fechar'); fechar.type = 'button';
+  top.append(el('b', '', o.titulo), fechar);
+  var box = el('div', 'height:240px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:8px;border:1px solid ' + C.ln + ';border-radius:10px');
+  box.setAttribute('role', 'log'); box.setAttribute('aria-live', 'polite');
+  var vazio = el('p', 'opacity:.65;font-size:13px;margin:auto;text-align:center', 'Nenhuma mensagem ainda. Toque numa resposta rápida ou escreva.'); box.append(vazio);
+  var qk = el('div', 'display:flex;flex-wrap:wrap;gap:6px;margin:8px 0');
+  var row = el('div', 'display:flex;gap:6px'), inp = el('input', 'flex:1;min-width:0;padding:9px 10px;border-radius:10px;border:1px solid ' + C.ln + ';background:transparent;color:inherit;font-size:15px'), sb = el('button', pill + ';font-weight:700', 'Enviar');
+  inp.type = 'text'; inp.maxLength = 200; inp.placeholder = 'Escreva uma mensagem…'; inp.setAttribute('aria-label', 'Mensagem'); sb.type = 'button'; row.append(inp, sb);
+  var st = el('p', 'font-size:12px;opacity:.8;margin:6px 0 0;min-height:16px'); st.setAttribute('role', 'status');
+  d.append(top, box, qk, row, st);
+  var nomes = { c: 'cliente', d: 'entregador', l: 'loja' };
+  function pinta(m) {
+    if (seen[m.id]) return; seen[m.id] = 1; if (vazio.parentNode) vazio.remove();
+    var mine = m.k === o.como, b = el('div', 'max-width:82%;padding:7px 10px;border-radius:12px;font-size:14px;word-break:break-word;align-self:' + (mine ? 'flex-end' : 'flex-start') + ';background:' + (mine ? C.me : C.ot) + ';color:' + (mine ? '#fff' : C.fg));
+    b.append(el('div', 'font-size:11px;opacity:.75;margin-bottom:2px', (mine ? 'Você' : m.n + ' (' + nomes[m.k] + ')') + ' · ' + new Date(m.ts).toTimeString().slice(0, 5)), el('div', '', m.t)); box.append(b);
+  }
+  function poll() {
+    if (busy || !d.isConnected) return; busy = 1;
+    o.req('/rivo/chat?chave=' + encodeURIComponent(o.chave) + '&rid=' + encodeURIComponent(o.rid) + '&como=' + o.como + '&desde=' + last).then(function (r) {
+      busy = 0;
+      if (!(r.ok && r.j && r.j.ok)) { st.textContent = (r.j && r.j.erro) || 'Sem conexão.'; return; }
+      var it = r.j.itens || [], perto = box.scrollHeight - box.scrollTop - box.clientHeight < 60 || !box.dataset.f;
+      it.forEach(function (m) { pinta(m); if (m.id > last) last = m.id; });
+      if (it.length && perto) { box.scrollTop = box.scrollHeight; box.dataset.f = 1; }
+      if (o.vis) o.vis(last);
+      ativo = r.j.ativo !== false; inp.disabled = sb.disabled = !ativo; if (!ativo) st.textContent = 'A entrega terminou: o chat foi encerrado.'; else if (/Sem conex|encerrad/.test(st.textContent)) st.textContent = '';
+    }).catch(function () { busy = 0; });
+  }
+  function envia(t, again) {
+    t = String(t || '').trim(); if (!t || !ativo) return; sb.disabled = true;
+    o.req('/rivo/chat/enviar', { chave: o.chave, rid: o.rid, como: o.como, t: t }).then(function (r) {
+      sb.disabled = !ativo;
+      if (r.ok && r.j && r.j.ok) { inp.value = ''; st.textContent = ''; poll(); return; }
+      if (!again && r.j && /ao mesmo tempo|Tente de novo/.test(r.j.erro || '')) return envia(t, 1);
+      st.textContent = (r.j && r.j.erro) || 'Não consegui enviar.';
+    });
+  }
+  (o.quick || []).forEach(function (q) { var b = el('button', pill, q); b.type = 'button'; b.onclick = function () { envia(q); }; qk.append(b); });
+  sb.onclick = function () { envia(inp.value); };
+  inp.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); envia(inp.value); } };
+  fechar.onclick = function () { d.close(); };
+  d.addEventListener('close', function () { clearInterval(tm); d.remove(); });
+  document.body.append(d); d.showModal(); poll(); tm = setInterval(poll, 3000);
+}
+/* ===== v40: push do Firebase (acorda o celular com o app fechado) ===== */
+var PUSH={tok:'',ini:0};
+function PN(){return NATIVE&&window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.PushNotifications}
+function pushReg(){if(!PUSH.tok||!tk())return;api('/rivo/push/registrar',{token:PUSH.tok,on:online()?1:0})}
+function pushInit(){var P=PN();if(!P||PUSH.ini)return;PUSH.ini=1;
+ try{P.addListener('registration',function(t){PUSH.tok=(t&&t.value)||'';pushReg()})}catch(e){}
+ try{P.addListener('registrationError',function(e){console.error('push',e)})}catch(e){}
+ try{P.addListener('pushNotificationReceived',function(n){var d=(n&&n.data)||{};if(d.tipo==='entrega'||d.tipo==='chat')mhCarrega()})}catch(e){}
+ try{P.addListener('pushNotificationActionPerformed',function(){mhCarrega()})}catch(e){}
+ try{notifSetup()}catch(e){}   /* cria o canal "chamadas" (som alto) que a notificação do servidor usa */
+ try{P.requestPermissions().then(function(r){if(r&&r.receive==='granted')P.register()}).catch(function(){})}catch(e){}}
+function pushSair(){var P=PN();if(PUSH.tok&&tk())api('/rivo/push/sair',{token:PUSH.tok});PUSH.tok='';PUSH.ini=0;try{if(P){P.unregister&&P.unregister();P.removeAllListeners&&P.removeAllListeners()}}catch(e){}}
+/* o login dura 90 dias contados do último uso: a cada abertura o servidor devolve um token novo */
+function renovaSessao(){api('/conta/renovar',{}).then(function(r){if(r.ok&&r.j&&r.j.token){var k=false;try{k=localStorage.getItem('mh_keep')==='1'}catch(e){}tkSet(r.j.token,k)}})}
+function mhChatAviso(){var m=MH.minha,c=m&&m.chat;if(!c||c.k==='d')return;var k='cn'+m.rid;if(c.last>(MH[k]||0)&&c.last>(MH['cs'+m.rid]||0)){MH[k]=c.last;toast('💬 '+(c.k==='l'?'Loja':'Cliente')+': '+c.t);try{chime('entrega')}catch(e){}try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}}}
 function mhAtual(b,x){var c=document.createElement('div');c.style.cssText='border:1px solid var(--cy);border-radius:10px;padding:12px;margin-top:8px';
  var col=x.st==='coletada';
  c.append(h('b',null,col?'Levando o pedido ao cliente':'Vá buscar o pedido na loja'));
@@ -505,6 +571,7 @@ function mhAtual(b,x){var c=document.createElement('div');c.style.cssText='borde
  var alvo=col?(x.dest?x.dest.lat+','+x.dest.lng:(cl.end||'')):(x.loja.lat+','+x.loja.lng);
  if(alvo){var a=h('a','btn',col?'Abrir rota até o cliente':'Abrir rota até a loja');a.href=mhMapaLink(alvo);a.target='_blank';a.rel='noopener noreferrer';ac.append(a)}
  if(cl.tel){var t=h('a','btn','Ligar para o cliente');t.href='tel:'+cl.tel;ac.append(t)}
+ if(x.chave&&x.rid){var cn=x.chat&&x.chat.k!=='d'&&x.chat.last>(MH['cs'+x.rid]||0);ac.append(btn(cn?'p':'','💬 Chat'+(cn?' · nova mensagem':''),function(){chat39({titulo:'Chat da entrega',dark:true,como:'d',chave:x.chave,rid:x.rid,req:api,vis:function(n){MH['cs'+x.rid]=n},quick:["Já estou a caminho 🛵", "Estou chegando", "Cheguei! Estou na porta", "Estou na loja, aguardando o pedido", "Não achei o endereço, pode me ajudar?", "Pode me ligar?"]})}))}
  if(!col){ac.append(btn('p','Peguei o pedido',function(){api('/rivo/etapa',{st:'coletada'}).then(function(r){toast(r.ok?'Boa! Agora leve ao cliente.':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})}),btn('','Desistir',function(){if(confirm('Desistir desta entrega? Ela volta para a fila.'))api('/rivo/desistir',{}).then(function(r){toast(r.ok?'Entrega devolvida à fila.':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})}))}
  else ac.append(btn('p','Entreguei ao cliente',function(){if(confirm('Confirmar que o pedido foi entregue ao cliente?\n\nSe o pedido tiver bebida alcoólica, só entregue a maiores de 18 anos, conferindo o documento.'))api('/rivo/etapa',{st:'entregue'}).then(function(r){toast(r.ok?'Entrega concluída!':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})}));
  c.append(ac);
