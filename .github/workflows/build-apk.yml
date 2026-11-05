@@ -34,63 +34,18 @@ jobs:
           python3 native/patch_android.py
           grep -n "firebase\|google-services" android/build.gradle android/app/build.gradle || true
           grep -n "RivoMessagingService\|AlertService\|showWhenLocked" android/app/src/main/AndroidManifest.xml
-      - name: Ícone do app (fundo liso + asas grandes)
+      - name: Ícones do app e da notificação (prontos em native/res)
         run: |
-          pip install pillow --break-system-packages
-          python3 - <<'PY'
-          import os, shutil
-          from PIL import Image, ImageDraw, ImageChops
-
-          src = Image.open('www/rivo-icons/icon-512.png').convert('RGBA')
-          # 1) acha o desenho (ignora margem transparente) e tira a borda azul e os cantos arredondados
-          bb = src.getchannel('A').point(lambda v: 255 if v > 20 else 0).getbbox() or (0, 0, src.width, src.height)
-          w = bb[2] - bb[0]
-          m = int(w * 0.09)
-          core = src.crop((bb[0] + m, bb[1] + m, bb[2] - m, bb[3] - m)).convert('RGB')
-          # 2) cor de fundo = cor do canto do miolo
-          px = core.load(); n = max(4, core.width // 25)
-          cs = [px[x, y] for x in range(2, n) for y in range(2, n)]
-          bg = tuple(sorted(c[i] for c in cs)[len(cs) // 2] for i in range(3))
-          lum = lambda c: 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
-          bl = lum(bg)
-          # 3) transparência = o quanto cada ponto é mais claro que o fundo (sobram só as asas)
-          alpha = core.convert('L').point(lambda v: max(0, min(255, int((v - bl - 25) * 255 / 60))))
-          asas = core.convert('RGBA'); asas.putalpha(alpha)
-          caixa = alpha.point(lambda v: 255 if v > 40 else 0).getbbox() or (0, 0, core.width, core.height)
-          asas = asas.crop(caixa)
-
-          def compor(tam, frac, fundo):
-              # coloca as asas centralizadas, ocupando 'frac' da largura (sem passar de 'frac' da altura)
-              k = min(tam * frac / asas.width, tam * frac / asas.height)
-              a = asas.resize((max(1, round(asas.width * k)), max(1, round(asas.height * k))), Image.LANCZOS)
-              t = Image.new('RGBA', (tam, tam), (bg + (255,)) if fundo else (0, 0, 0, 0))
-              t.alpha_composite(a, ((tam - a.width) // 2, (tam - a.height) // 2))
-              return t
-
-          res = 'android/app/src/main/res'
-          shutil.rmtree(res + '/mipmap-anydpi-v26', ignore_errors=True)
-          os.makedirs(res + '/mipmap-anydpi-v26', exist_ok=True)
-          # Android 8+: ícone adaptivo (fundo cor lisa + asas grandes na parte segura de 66%)
-          xml = '<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n    <background android:drawable="@color/ic_launcher_background"/>\n    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n</adaptive-icon>\n'
-          for nome in ('ic_launcher.xml', 'ic_launcher_round.xml'):
-              open(res + '/mipmap-anydpi-v26/' + nome, 'w').write(xml)
-          os.makedirs(res + '/values', exist_ok=True)
-          open(res + '/values/ic_launcher_background.xml', 'w').write('<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#%02X%02X%02X</color>\n</resources>\n' % bg)
-          for d, dp in {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}.items():
-              pasta = f'{res}/mipmap-{d}'
-              os.makedirs(pasta, exist_ok=True)
-              compor(round(108 * dp), 0.62, False).save(f'{pasta}/ic_launcher_foreground.png')
-              leg = compor(round(48 * dp), 0.80, True)
-              leg.save(f'{pasta}/ic_launcher.png')
-              mask = Image.new('L', leg.size, 0); ImageDraw.Draw(mask).ellipse((0, 0, leg.width - 1, leg.height - 1), fill=255)
-              red = leg.copy(); red.putalpha(mask); red.save(f'{pasta}/ic_launcher_round.png')
-          print('Ícone: fundo #%02X%02X%02X, asas %dx%d' % (bg + asas.size))
-          PY
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          cp -r native/res/. android/app/src/main/res/
+          ls android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/mipmap-xxhdpi
       - name: Número da versão no app
         run: |
           sed -i "s/__BUILD__/${{ github.run_number }}/" www/rivo.html
           grep -c "'${{ github.run_number }}'" www/rivo.html
-          cp www/rivo.html www/index.html
+          # um arquivo só no app: rivo.html vira index.html (o site continua usando rivo.html)
+          mv www/rivo.html www/index.html
+          rm -f www/rivo.webmanifest www/rivo-sw.js
       - run: npx cap sync android
       - name: Assinatura fixa (para o app atualizar por cima, sem desinstalar)
         env:
