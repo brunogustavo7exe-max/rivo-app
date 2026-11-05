@@ -104,7 +104,8 @@ public class AlertService extends Service {
         PendingIntent ps = PendingIntent.getService(this, 2, parar, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         return new NotificationCompat.Builder(this, CANAL)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_rivo)
+                .setColor(0xFFFFB800)
                 .setContentTitle("🛵 Nova entrega" + (loja != null && !loja.isEmpty() ? " · " + loja : ""))
                 .setContentText(txt)
                 .setPriority(NotificationCompat.PRIORITY_MAX)

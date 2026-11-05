@@ -170,6 +170,70 @@ body.deslogado #entrada{display:grid;min-height:100vh;place-items:center;padding
 .bar i.v{background:var(--ok)}
 #upd{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:max(28px,env(safe-area-inset-top)) 28px max(28px,env(safe-area-inset-bottom));text-align:center;background:radial-gradient(900px 480px at 50% -10%,#0b2a52,transparent 62%),var(--bg)}
 #upd img{width:92px;height:92px;border-radius:22px}#upd h2{font-size:24px;margin:4px 0 0}#upd p{color:var(--tx2);max-width:340px}#upd .btn{width:100%;max-width:340px}#upd small{color:var(--tx2);font-size:12px}
+/* ===== RIVO · cockpit: painel único, feito para usar com uma mão (moto / carro) ===== */
+#seg{display:none!important}
+.btn{min-height:48px;border-radius:12px;font-size:15px;gap:8px}
+.btn.sm{min-height:42px;border-radius:10px;font-size:14px}
+.btn svg,.tile svg,.mc svg{flex:none}
+.btn.dg{border-color:rgba(255,97,89,.45)}
+@media(max-width:700px){
+ .acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .acts>.btn{width:100%;text-align:center}
+ .acts>.btn.p,.acts>.btn.big{grid-column:1/-1}
+}
+#mhrivo.cp{display:grid;gap:12px;margin:0 0 16px;padding:0;border:0;background:none}
+.cp-st{display:flex;align-items:center;gap:14px;width:100%;min-height:80px;padding:12px 16px;border-radius:16px;border:1px solid var(--ln);background:var(--sf);color:var(--tx);text-align:left;cursor:pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.cp-st:active{transform:scale(.985)}
+.cp-l{flex:1;min-width:0}.cp-l b{display:block;font-size:22px;line-height:1.1;font-weight:800;letter-spacing:.02em;text-transform:uppercase}
+.cp-l small{display:block;margin-top:3px;font-size:13.5px;font-weight:600;opacity:.85}
+.cp-st .dot{flex:none;width:14px;height:14px;border-radius:50%}
+.cp-st .sw{flex:none;position:relative;width:58px;height:32px;border-radius:99px;background:rgba(0,0,0,.28);border:2px solid rgba(0,0,0,.35)}
+.cp-st .sw i{position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.5);transition:left .15s}
+.cp-st.off{background:var(--cy);border-color:var(--cy);color:#14110a}
+.cp-st.off .dot{background:#14110a;opacity:.55}
+.cp-st.on{border-color:rgba(61,220,132,.6);background:linear-gradient(120deg,rgba(61,220,132,.20),rgba(61,220,132,.05));color:var(--tx)}
+.cp-st.on .dot{background:var(--ok);box-shadow:0 0 0 0 rgba(61,220,132,.6);animation:pl 1.8s infinite}
+.cp-st.on .sw{background:var(--ok);border-color:var(--ok)}.cp-st.on .sw i{left:28px}
+.cp-st.on .cp-l b{color:var(--ok)}
+@keyframes pl{70%{box-shadow:0 0 0 10px rgba(61,220,132,0)}100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}}
+@media(prefers-reduced-motion:reduce){.cp-st.on .dot{animation:none}}
+.cp-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mc{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:4px 12px;border:1px solid var(--ln);border-radius:99px;background:var(--sf);font-size:13px;color:var(--tx2);font-weight:600;font-family:inherit}
+.mc b{color:var(--tx);font-family:var(--mono)}
+.mc.wr{border-color:rgba(255,184,0,.6);color:var(--wr)}.mc.ok{border-color:rgba(61,220,132,.5);color:var(--ok)}.mc.er{border-color:rgba(255,97,89,.6);color:var(--er)}
+button.mc{cursor:pointer}button.mc:hover{border-color:var(--cy)}
+.tiles{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:8px}
+.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:74px;padding:9px 4px;border-radius:12px;border:1px solid var(--ln);background:var(--sf);color:var(--tx);font-family:inherit;font-weight:700;font-size:12.5px;line-height:1.15;letter-spacing:.02em;cursor:pointer;text-decoration:none;text-align:center;position:relative;-webkit-tap-highlight-color:transparent}
+.tile:hover,.tile:active{border-color:var(--cy)}.tile svg{color:var(--cy)}
+.tile.mute svg{color:var(--tx2)}
+.tile[aria-disabled=true]{opacity:.4;pointer-events:none}
+.tile .bd{position:absolute;top:8px;right:calc(50% - 20px);width:10px;height:10px;border-radius:50%;background:var(--er);border:2px solid var(--sf)}
+.cp-hint{font-size:13px;color:var(--tx2);line-height:1.45;padding:0 2px}
+.cp-t{display:flex;align-items:center;gap:8px;font:700 11.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--tx2);margin:4px 2px 0}
+.cp-t .n{background:var(--cy);color:#14110a;border-radius:99px;padding:1px 9px;font-weight:800;letter-spacing:0}
+.cp-empty{display:flex;gap:14px;align-items:center;padding:16px;border:1px dashed var(--ln);border-radius:14px;color:var(--tx2)}
+.cp-empty svg{flex:none;color:var(--tx2);opacity:.7}.cp-empty b{display:block;color:var(--tx);font-size:15px}.cp-empty span{font-size:13px}
+.cp-msg{padding:16px;border:1px solid var(--ln);border-radius:14px;background:var(--sf);color:var(--tx2)}.cp-msg.er{border-color:rgba(255,97,89,.5);color:var(--er)}
+.job{display:grid;gap:10px;padding:14px 14px 14px 18px;border:1px solid var(--ln);border-radius:14px;background:var(--sf);position:relative;overflow:hidden}
+.job::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cy)}
+.job-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.job-h b{font-size:17px;line-height:1.25;overflow-wrap:anywhere}
+.job-p{font:800 26px/1 var(--mono);color:var(--cy);white-space:nowrap;text-align:right}.job-p small{display:block;font:700 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--tx2);margin-bottom:3px}
+.job-m{display:flex;flex-wrap:wrap;gap:6px}
+.job-a{display:grid;grid-template-columns:1.15fr 1fr;gap:8px}.job-a .btn{width:100%;min-height:54px}
+.run{display:grid;gap:12px;padding:16px;border:1px solid var(--cy);border-radius:16px;background:linear-gradient(160deg,rgba(255,184,0,.12),var(--sf) 62%)}
+.run-s{display:grid;grid-template-columns:1fr 1fr;gap:6px}.run-s i{height:6px;border-radius:3px;background:var(--ln)}.run-s i.on{background:var(--cy);box-shadow:0 0 10px rgba(255,184,0,.4)}
+.run-k{font:700 11.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--cy)}
+.run-addr{font-size:21px;font-weight:800;line-height:1.25;overflow-wrap:anywhere}
+.run-l{display:grid;gap:7px;color:var(--tx2);font-size:14.5px}.run-l div{display:flex;gap:9px;align-items:flex-start}.run-l svg{flex:none;margin-top:2px}
+.run-l b{color:var(--tx)}
+.run .go{width:100%;min-height:66px;font-size:19px;border-radius:14px}
+.run .tiles{--n:3}
+.ks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--ln);border-radius:14px;background:var(--sf);overflow:hidden;margin-bottom:14px}
+.ks div{padding:11px 6px;text-align:center;border-left:1px solid var(--ln)}.ks div:first-child{border-left:0}
+.ks b{display:block;font:800 26px/1.1 var(--mono)}.ks span{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)}
+.ks .al b{color:var(--er)}
+details.note summary{cursor:pointer;font-weight:700;color:var(--tx)}details.note p{margin-top:8px}
 </style><style id="rivo-scroll">
 html{scrollbar-color:#ffe600 #0c0e11;scrollbar-width:thin}
 *{scrollbar-color:#ffe600 #0c0e11;scrollbar-width:thin}
@@ -373,7 +437,7 @@ function importaFila(){var fila=lerLS('rivo_fila_v1',[]),n=0;if(!Array.isArray(f
  if(n){save();toast(n===1?'Novo pedido do MESA: entregador solicitado.':n+' novos pedidos do MESA.');render()}}
 setInterval(importaFila,3000);window.addEventListener('storage',function(ev){if(ev.key==='rivo_fila_v1')importaFila()});
 /* ---- navegação ---- */
-var M=location.hash==='#entregador'?'dr':'op',cur=location.hash==='#carona'?'caronas':'inicio',FLT='ativas',V={};
+var M='op',cur=location.hash==='#carona'?'caronas':'inicio',FLT='ativas',V={};
 /* ---- v36: entregas do MiHelp (fila, aceite, posição de verdade, mensalidade) ---- */
 var MH={eu:null,fila:null,minha:null,erro:'',w:null,lastPos:0,busy:0,t:null,pos:null,gpsErro:'',tabela:null,precisa:0};
 function mhBox(){return document.getElementById('mhrivo')}
@@ -439,15 +503,23 @@ function chamadaTela(i){callFecha();
  ov.append(btn('big','Propor outro valor',function(){proporForm(i)}),btn('','Ignorar',callFecha));
  document.body.append(ov);CALL.ov=ov;ring();CALL.iv=setInterval(ring,2200);CALL.tm=setTimeout(callFecha,45000)}
 function mhPoll(){if(MH.t)return;MH.t=setInterval(function(){if(!tk())return;if((mhBox()&&!document.hidden)||(online()&&(!document.hidden||NATIVE)))mhCarrega()},6000)}
-function mhOnlineBox(){var on=online(),c=document.createElement('div');c.style.cssText='margin:8px 0';
- var ac=h('div','acts');ac.append(btn(on?'':'p',on?'🟢 Online · recebendo chamadas (toque para sair)':'Ficar online e receber chamadas',function(){setOnline(!on)}));if(MH.tabela)ac.append(btn('sm','Ver tabela de preços',tabelaModal));if(rn())ac.append(btn('sm','🔔 Toque do alerta',tomModal),btn('sm','⚙️ Preparar o celular',prepModal));
- c.append(ac,h('div','m',on?(NATIVE?'Com o app minimizado, o aviso chega por notificação enquanto o RIVO estiver online. Se você fechar o app de vez, ele para de receber.':'Mantenha o RIVO aberto na tela. Cada chamada toca e vibra.'):'Online, cada chamada nova ocupa a tela, toca e vibra, como nos apps de corrida. Sua localização só é enviada durante uma entrega.'));return c}
-function mhCartao(i){var c=document.createElement('div');c.style.cssText='border:1px solid var(--ln);border-radius:10px;padding:10px;margin:8px 0';
- c.append(h('b',null,i.loja));var dd=[];if(i.kmAteLoja!=null)dd.push('Loja a '+kmTxt(i.kmAteLoja)+' km de você');if(i.kmCli!=null)dd.push('entrega a '+kmTxt(i.kmCli)+' km da loja');dd.push('há '+ago(i.t)+' na fila');
- c.append(h('div','m',dd.join(' · ')),h('div',null,'A loja oferece '+R(i.taxa)));
+/* ===== v40 · cockpit: ícones, botões e blocos do painel único ===== */
+var IK={power:'M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10',tag:'M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01',bell:'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0',vol:'M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07',mute:'M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6',phone:'M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM12 18h.01',nav:'M3 11l19-9-9 19-2-8-8-2z',call:'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z',chat:'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z',pin:'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0zM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',user:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',box:'M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96L12 12.01l8.73-5.05M12 22.08V12',star:'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',edit:'M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z',check:'M20 6L9 17l-5-5',plus:'M12 5v14M5 12h14',inbox:'M22 12h-6l-2 3h-4l-2-3H2M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z',x:'M18 6L6 18M6 6l12 12',clock:'M12 6v6l4 2M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z',money:'M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',cal:'M3 4h18v18H3zM16 2v4M8 2v4M3 10h18'};
+function ico(n,s){var e=document.createElement('span');e.style.cssText='display:inline-flex;flex:none';e.setAttribute('aria-hidden','true');s=s||20;e.innerHTML='<svg viewBox="0 0 24 24" width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+(IK[n]||'')+'"/></svg>';return e}
+function btnI(c,i,x,fn){var b=h('button','btn '+c);b.type='button';b.append(ico(i),h('span',null,x));b.onclick=fn;return b}
+function mc(i,x,c){var e=h('span','mc'+(c?' '+c:''));e.append(ico(i,15),document.createTextNode(x));return e}
+function tile(i,x,fn,c){var e=h('button','tile'+(c?' '+c:''));e.type='button';e.append(ico(i,24),h('span',null,x));e.onclick=fn;return e}
+function tileA(i,x,href,c){var e=h('a','tile'+(c?' '+c:''));if(href){e.href=href;e.target='_blank';e.rel='noopener noreferrer'}else e.setAttribute('aria-disabled','true');e.append(ico(i,24),h('span',null,x));return e}
+function cpMsg(t,c){return h('div','cp-msg'+(c?' '+c:''),t)}
+function cpStatus(){var on=online(),b=h('button','cp-st '+(on?'on':'off'));b.type='button';b.setAttribute('role','switch');b.setAttribute('aria-checked',on?'true':'false');
+ var l=h('span','cp-l');l.append(h('b',null,on?'Online':'Ficar online'),h('small',null,on?'Recebendo chamadas de entrega':'Toque para receber chamadas'));
+ var sw=h('span','sw');sw.append(h('i'));b.append(h('span','dot'),l,sw);b.onclick=function(){setOnline(!online())};return b}
+function mhOnlineHint(){var on=online();return h('p','cp-hint',on?(rn()?'Com o app fechado ou a tela bloqueada, a chamada chega com som e vibração. Se não tocar, abra “Celular” e libere as permissões.':(NATIVE?'Com o app minimizado, o aviso chega por notificação.':'Mantenha o RIVO aberto na tela. Cada chamada toca e vibra.')):'Online, cada chamada nova ocupa a tela, toca e vibra, como nos apps de corrida. Sua localização só é enviada durante uma entrega.')}
+function mhCartao(i){var c=h('div','job'),hd=h('div','job-h'),p=h('span','job-p');p.append(h('small',null,'A loja oferece'),document.createTextNode(R(i.taxa)));hd.append(h('b',null,i.loja),p);c.append(hd);
+ var mm=h('div','job-m');if(i.kmAteLoja!=null)mm.append(mc('pin','Loja a '+kmTxt(i.kmAteLoja)+' km'));if(i.kmCli!=null)mm.append(mc('nav','Entrega a '+kmTxt(i.kmCli)+' km'));mm.append(mc('clock','há '+ago(i.t)));c.append(mm);
  if(i.sug)c.append(h('div','m','Tabela'+(i.kmCli!=null?' ('+kmTxt(i.kmCli)+' km)':'')+': '+R(i.sug)));
- var m=i.minha;if(m)c.append(h('div',null,m.s==='r'?'Sua proposta de '+R(m.v)+' foi recusada.':'Sua proposta de '+R(m.v)+' espera a resposta da loja…'));
- var ac=h('div','acts');ac.append(btn('p','Aceitar por '+R(i.taxa),function(){aceitarChamada(i)}),btn('','Propor valor',function(){proporForm(i)}));c.append(ac);return c}
+ var m=i.minha;if(m)c.append(h('div','m',m.s==='r'?'Sua proposta de '+R(m.v)+' foi recusada.':'Sua proposta de '+R(m.v)+' espera a resposta da loja…'));
+ var ac=h('div','job-a');ac.append(btnI('p','check','Aceitar',function(){aceitarChamada(i)}),btnI('','tag','Propor valor',function(){proporForm(i)}));c.append(ac);return c}
 function mhCat(b,e){if(!('cat' in e))return true;if(e.cat==='urbano'&&!MH.precisa)return true;
  var c=document.createElement('div');c.style.cssText='border:1px solid var(--cy);border-radius:10px;padding:12px;margin:8px 0';
  function set(cat){api('/rivo/perfil',{cat:cat,veic:e.veic||'',placa:e.placa||''}).then(function(r){toast(r.ok?'Salvo.':((r.j&&r.j.erro)||'Não consegui salvar.'));mhCarrega()})}
@@ -461,8 +533,8 @@ function mhCarrega(){if(!tk()||MH.busy)return;MH.busy=1;
   var f=r.j.ativa?api('/rivo/minha'):(r.j.mensalidade.ok?mhPosAgora().then(function(p){return api('/rivo/entregas'+(p?'?lat='+p.lat+'&lng='+p.lng:''))}):Promise.resolve(null));
   return f.then(function(x){MH.busy=0;MH.minha=null;MH.fila=null;MH.precisa=0;
    if(x&&x.ok&&x.j){if(r.j.ativa)MH.minha=x.j.entrega||null;else{MH.fila=x.j.itens||[];if(x.j.tabela)MH.tabela=x.j.tabela}}else if(x&&x.j&&x.j.precisaPerfil)MH.precisa=1;
-   mhGps();mhAviso();mhDesenha()})}).catch(function(){MH.busy=0})}
-function mhRivo(v){var b=document.createElement('section');b.id='mhrivo';b.style.cssText='border:1px solid var(--ln);background:var(--sf);border-radius:12px;padding:14px;margin-bottom:14px';v.prepend(b);mhDesenha();
+   mhGps();mhAviso();mhChatAviso();mhDesenha()})}).catch(function(){MH.busy=0})}
+function mhRivo(v){var b=document.createElement('section');b.id='mhrivo';b.className='cp';v.prepend(b);mhDesenha();
  mhPoll();mhCarrega()}
 function mhMapaLink(q){return'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q)}
 function mhPerfil(){modal('Seu veículo',function(f,close){
@@ -480,44 +552,105 @@ function mhPagar(){api('/rivo/mensalidade/pix',{}).then(function(r){
   f.append(btn('p','Copiar código Pix',function(){ta.select();try{navigator.clipboard.writeText(ta.value)}catch(e){document.execCommand('copy')}toast('Código copiado.')}),btn('','Fechar',fecha),st);
   var n=0;tm=setInterval(function(){n++;if(n>150){clearInterval(tm);st.textContent='O tempo acabou. Se já pagou, feche e atualize.';return}
    api('/pix/status?id='+encodeURIComponent(r.j.id)).then(function(x){if(x.ok&&x.j&&x.j.status==='approved'){clearInterval(tm);toast('Mensalidade paga! Acesso liberado.');close();mhCarrega()}})},4000)})})}
-function mhDesenha(){var b=mhBox();if(!b)return;b.textContent='';
- b.append(h('h3',null,'🛵 Entregas do MiHelp'));
- if(!tk()){b.append(h('p','m','Entre na conta para ver as entregas dos restaurantes e lojas do MiHelp.'));return}
- if(MH.erro){b.append(h('p','m',MH.erro));return}
- var e=MH.eu;if(!e){b.append(h('p','m','Carregando…'));return}
- var top=h('p','m','⭐ '+(e.n?String(e.nota).replace('.',',')+' ('+e.n+' avaliações)':'Sem avaliações ainda')+' · '+(e.veic||'veículo não informado')+(e.placa?' · '+e.placa:'')+' ');
- top.append(btn('sm','Editar',mhPerfil));b.append(top);
- if(!mhCat(b,e))return;
- var m=e.mensalidade;
+function mhDesenha(){var b=mhBox();if(!b)return;b.textContent='';b.className='cp';
+ if(!tk()){b.append(cpMsg('Entre na conta para ver as entregas dos restaurantes e lojas do MiHelp.'));return}
+ if(MH.erro){b.append(cpMsg(MH.erro,'er'));return}
+ var e=MH.eu;if(!e){b.append(cpMsg('Carregando…'));return}
+ var m=e.mensalidade,x=MH.minha;
  if(!m.ok){
-  b.append(h('p',null,m.status==='vencido'?'Sua mensalidade venceu.':m.status==='revogado'?'Seu acesso ao RIVO foi suspenso. Fale com o suporte.':'Para ver e aceitar entregas é preciso a mensalidade do RIVO.'));
-  if(m.status!=='revogado'){b.append(h('p','m',m.preco>0?'Mensalidade: '+m.preco.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})+' por '+m.dias+' dias. Sem comissão por corrida.':'O valor da mensalidade ainda não foi definido.'));if(m.preco>0)b.append(btn('p','Pagar com Pix',mhPagar))}
-  return}
- b.append(h('p','m','Mensalidade em dia · '+m.restantes+(m.restantes===1?' dia':' dias')+' restantes'));
- var x=MH.minha;
+  var pc=h('div','job');pc.append(h('b',null,m.status==='vencido'?'Sua mensalidade venceu.':m.status==='revogado'?'Seu acesso ao RIVO foi suspenso. Fale com o suporte.':'Para ver e aceitar entregas é preciso a mensalidade do RIVO.'));
+  if(m.status!=='revogado'){pc.append(h('p','m',m.preco>0?'Mensalidade: '+m.preco.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})+' por '+m.dias+' dias. Sem comissão por corrida.':'O valor da mensalidade ainda não foi definido.'));if(m.preco>0)pc.append(btnI('p','money','Pagar com Pix',mhPagar))}
+  b.append(pc);return}
+ /* 1) o botão que manda: online / offline (só quando não há entrega em andamento) */
+ if(!x)b.append(cpStatus());
+ /* 2) quem sou eu: nota, veículo, mensalidade */
+ var meta=h('div','cp-meta');meta.append(mc('star',e.n?String(e.nota).replace('.',',')+' ('+e.n+')':'Sem avaliações'));
+ var vb=h('button','mc'+(e.veic?'':' wr'));vb.type='button';vb.append(ico(e.veic?'edit':'plus',15),document.createTextNode((e.veic||'Informar veículo')+(e.placa?' · '+e.placa:'')));vb.onclick=mhPerfil;meta.append(vb);
+ meta.append(mc('cal','Plano · '+m.restantes+(m.restantes===1?' dia':' dias'),m.restantes<=5?'wr':''));b.append(meta);
+ if(!mhCat(b,e))return;
  if(x){mhAtual(b,x);return}
- var l=MH.fila||[];
- b.append(mhOnlineBox());b.append(h('h4',null,l.length?'Entregas esperando entregador':'Nenhuma entrega esperando agora'));
- var sb=btn('sm','Som de novos pedidos: '+(somOn()?'ligado':'desligado'),function(){try{localStorage.setItem('rivo_som',somOn()?'0':'1')}catch(e){}if(somOn())chime('entrega');mhDesenha()});sb.style.marginBottom='6px';b.append(sb);
- if(!l.length)b.append(h('p','m','Esta lista atualiza sozinha. Deixe esta tela aberta.'));
+ /* 3) atalhos: sempre alinhados em colunas iguais */
+ var t=h('div','tiles'),ts=[];
+ if(MH.tabela)ts.push(tile('tag','Preços',tabelaModal));
+ if(rn())ts.push(tile('bell','Toque',tomModal),tile('phone','Celular',prepModal));
+ ts.push(tile(somOn()?'vol':'mute','Som: '+(somOn()?'ligado':'mudo'),function(){try{localStorage.setItem('rivo_som',somOn()?'0':'1')}catch(e){}if(somOn())chime('entrega');mhDesenha()},somOn()?'':'mute'));
+ t.style.setProperty('--n',String(ts.length));ts.forEach(function(z){t.append(z)});b.append(t);b.append(mhOnlineHint());
+ /* 4) fila */
+ var l=MH.fila||[],tt=h('div','cp-t');tt.append(document.createTextNode('Esperando entregador'));if(l.length)tt.append(h('span','n',String(l.length)));b.append(tt);
+ if(!l.length){var em=h('div','cp-empty'),tx=h('div');tx.append(h('b',null,'Nenhuma entrega esperando agora'),h('span',null,'A lista atualiza sozinha. Deixe esta tela aberta.'));em.append(ico('inbox',34),tx);b.append(em)}
  l.forEach(function(i){b.append(mhCartao(i))})}
-function mhAtual(b,x){var c=document.createElement('div');c.style.cssText='border:1px solid var(--cy);border-radius:10px;padding:12px;margin-top:8px';
- var col=x.st==='coletada';
- c.append(h('b',null,col?'Levando o pedido ao cliente':'Vá buscar o pedido na loja'));
- c.append(h('div',null,'🍽 '+x.loja.nome+(x.loja.end?' — '+x.loja.end:'')));
- c.append(h('div',null,'Corrida: '+R(x.taxa)+' (combine o pagamento direto com a loja)'));
- var cl=x.cliente||{};
- if(col||true){c.append(h('div',null,'👤 '+(cl.nome||'Cliente')+(cl.qtd?' · '+cl.qtd+(cl.qtd===1?' item':' itens'):'')),h('div',null,'🏠 '+(cl.end||'Endereço não informado')));if(cl.obs)c.append(h('div','m','Obs: '+cl.obs));if(cl.pag)c.append(h('div','m','Pagamento do cliente: '+cl.pag+(cl.pag==='Dinheiro'?' — confira com a loja se você deve cobrar na porta.':'')))}
- var ac=h('div','acts');
- var alvo=col?(x.dest?x.dest.lat+','+x.dest.lng:(cl.end||'')):(x.loja.lat+','+x.loja.lng);
- if(alvo){var a=h('a','btn',col?'Abrir rota até o cliente':'Abrir rota até a loja');a.href=mhMapaLink(alvo);a.target='_blank';a.rel='noopener noreferrer';ac.append(a)}
- if(cl.tel){var t=h('a','btn','Ligar para o cliente');t.href='tel:'+cl.tel;ac.append(t)}
- if(!col){ac.append(btn('p','Peguei o pedido',function(){api('/rivo/etapa',{st:'coletada'}).then(function(r){toast(r.ok?'Boa! Agora leve ao cliente.':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})}),btn('','Desistir',function(){if(confirm('Desistir desta entrega? Ela volta para a fila.'))api('/rivo/desistir',{}).then(function(r){toast(r.ok?'Entrega devolvida à fila.':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})}))}
- else ac.append(btn('p','Entreguei ao cliente',function(){if(confirm('Confirmar que o pedido foi entregue ao cliente?\n\nSe o pedido tiver bebida alcoólica, só entregue a maiores de 18 anos, conferindo o documento.'))api('/rivo/etapa',{st:'entregue'}).then(function(r){toast(r.ok?'Entrega concluída!':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})}));
- c.append(ac);
- c.append(h('p','m',MH.gpsErro||'📍 Sua posição está sendo enviada para o cliente e para a loja só durante esta entrega. Mantenha esta tela aberta e o celular com a tela ligada.'));
+/* ===== v39: chat da entrega (cliente · entregador · loja), uma conversa só por entrega ===== */
+function chat39(o) {
+  var C = o.dark ? { bg: '#1b1e24', fg: '#fff', ln: '#555', me: '#2f6f4e', ot: '#2d323b' } : { bg: '#fff', fg: '#111', ln: '#cfd4dc', me: '#2563eb', ot: '#e8ecf2' };
+  var d = document.createElement('dialog'), last = 0, busy = 0, ativo = true, seen = {}, tm = null;
+  d.style.cssText = 'width:min(460px,94vw);padding:12px;border-radius:14px;border:1px solid ' + C.ln + ';background:' + C.bg + ';color:' + C.fg;
+  var el = function (t, css, x) { var e = document.createElement(t); if (css) e.style.cssText = css; if (x != null) e.textContent = x; return e; };
+  var pill = 'padding:6px 12px;border-radius:999px;border:1px solid ' + C.ln + ';background:transparent;color:inherit;font-size:13px;cursor:pointer';
+  var top = el('div', 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px'), fechar = el('button', pill, 'Fechar'); fechar.type = 'button';
+  top.append(el('b', '', o.titulo), fechar);
+  var box = el('div', 'height:240px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:8px;border:1px solid ' + C.ln + ';border-radius:10px');
+  box.setAttribute('role', 'log'); box.setAttribute('aria-live', 'polite');
+  var vazio = el('p', 'opacity:.65;font-size:13px;margin:auto;text-align:center', 'Nenhuma mensagem ainda. Toque numa resposta rápida ou escreva.'); box.append(vazio);
+  var qk = el('div', 'display:flex;flex-wrap:wrap;gap:6px;margin:8px 0');
+  var row = el('div', 'display:flex;gap:6px'), inp = el('input', 'flex:1;min-width:0;padding:9px 10px;border-radius:10px;border:1px solid ' + C.ln + ';background:transparent;color:inherit;font-size:15px'), sb = el('button', pill + ';font-weight:700', 'Enviar');
+  inp.type = 'text'; inp.maxLength = 200; inp.placeholder = 'Escreva uma mensagem…'; inp.setAttribute('aria-label', 'Mensagem'); sb.type = 'button'; row.append(inp, sb);
+  var st = el('p', 'font-size:12px;opacity:.8;margin:6px 0 0;min-height:16px'); st.setAttribute('role', 'status');
+  d.append(top, box, qk, row, st);
+  var nomes = { c: 'cliente', d: 'entregador', l: 'loja' };
+  function pinta(m) {
+    if (seen[m.id]) return; seen[m.id] = 1; if (vazio.parentNode) vazio.remove();
+    var mine = m.k === o.como, b = el('div', 'max-width:82%;padding:7px 10px;border-radius:12px;font-size:14px;word-break:break-word;align-self:' + (mine ? 'flex-end' : 'flex-start') + ';background:' + (mine ? C.me : C.ot) + ';color:' + (mine ? '#fff' : C.fg));
+    b.append(el('div', 'font-size:11px;opacity:.75;margin-bottom:2px', (mine ? 'Você' : m.n + ' (' + nomes[m.k] + ')') + ' · ' + new Date(m.ts).toTimeString().slice(0, 5)), el('div', '', m.t)); box.append(b);
+  }
+  function poll() {
+    if (busy || !d.isConnected) return; busy = 1;
+    o.req('/rivo/chat?chave=' + encodeURIComponent(o.chave) + '&rid=' + encodeURIComponent(o.rid) + '&como=' + o.como + '&desde=' + last).then(function (r) {
+      busy = 0;
+      if (!(r.ok && r.j && r.j.ok)) { st.textContent = (r.j && r.j.erro) || 'Sem conexão.'; return; }
+      var it = r.j.itens || [], perto = box.scrollHeight - box.scrollTop - box.clientHeight < 60 || !box.dataset.f;
+      it.forEach(function (m) { pinta(m); if (m.id > last) last = m.id; });
+      if (it.length && perto) { box.scrollTop = box.scrollHeight; box.dataset.f = 1; }
+      if (o.vis) o.vis(last);
+      ativo = r.j.ativo !== false; inp.disabled = sb.disabled = !ativo; if (!ativo) st.textContent = 'A entrega terminou: o chat foi encerrado.'; else if (/Sem conex|encerrad/.test(st.textContent)) st.textContent = '';
+    }).catch(function () { busy = 0; });
+  }
+  function envia(t, again) {
+    t = String(t || '').trim(); if (!t || !ativo) return; sb.disabled = true;
+    o.req('/rivo/chat/enviar', { chave: o.chave, rid: o.rid, como: o.como, t: t }).then(function (r) {
+      sb.disabled = !ativo;
+      if (r.ok && r.j && r.j.ok) { inp.value = ''; st.textContent = ''; poll(); return; }
+      if (!again && r.j && /ao mesmo tempo|Tente de novo/.test(r.j.erro || '')) return envia(t, 1);
+      st.textContent = (r.j && r.j.erro) || 'Não consegui enviar.';
+    });
+  }
+  (o.quick || []).forEach(function (q) { var b = el('button', pill, q); b.type = 'button'; b.onclick = function () { envia(q); }; qk.append(b); });
+  sb.onclick = function () { envia(inp.value); };
+  inp.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); envia(inp.value); } };
+  fechar.onclick = function () { d.close(); };
+  d.addEventListener('close', function () { clearInterval(tm); d.remove(); });
+  document.body.append(d); d.showModal(); poll(); tm = setInterval(poll, 3000);
+}
+function mhChatAviso(){var m=MH.minha,c=m&&m.chat;if(!c||c.k==='d')return;var k='cn'+m.rid;if(c.last>(MH[k]||0)&&c.last>(MH['cs'+m.rid]||0)){MH[k]=c.last;toast('💬 '+(c.k==='l'?'Loja':'Cliente')+': '+c.t);try{chime('entrega')}catch(e){}try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}}}
+function mhAtual(b,x){var col=x.st==='coletada',cl=x.cliente||{},c=h('div','run');
+ var st=h('div','run-s');st.append(h('i','on'),h('i',col?'on':''));c.append(st,h('div','run-k',col?'Etapa 2 de 2 · Entregar ao cliente':'Etapa 1 de 2 · Buscar na loja'));
+ c.append(h('div','run-addr',col?(cl.end||'Endereço não informado'):((x.loja.end||x.loja.nome)||'Loja')));
+ var ls=h('div','run-l'),r1=h('div');r1.append(ico('box',17),h('span',null,x.loja.nome));ls.append(r1);
+ var r2=h('div');r2.append(ico('user',17),h('span',null,(cl.nome||'Cliente')+(cl.qtd?' · '+cl.qtd+(cl.qtd===1?' item':' itens'):'')));ls.append(r2);
+ var r3=h('div'),bb=h('b',null,R(x.taxa));r3.append(ico('money',17),bb,h('span',null,' · combine o pagamento direto com a loja'));ls.append(r3);
+ if(cl.obs){var r4=h('div');r4.append(ico('edit',17),h('span',null,'Obs: '+cl.obs));ls.append(r4)}
+ if(cl.pag){var r5=h('div');r5.append(ico('money',17),h('span',null,'Cliente paga: '+cl.pag+(cl.pag==='Dinheiro'?' — confira com a loja se você deve cobrar na porta.':'')));ls.append(r5)}
+ c.append(ls);
+ var go=col?btnI('p go','check','Entreguei ao cliente',function(){if(confirm('Confirmar que o pedido foi entregue ao cliente?\n\nSe o pedido tiver bebida alcoólica, só entregue a maiores de 18 anos, conferindo o documento.'))api('/rivo/etapa',{st:'entregue'}).then(function(r){toast(r.ok?'Entrega concluída!':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})}):btnI('p go','check','Peguei o pedido',function(){api('/rivo/etapa',{st:'coletada'}).then(function(r){toast(r.ok?'Boa! Agora leve ao cliente.':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})});
+ c.append(go);
+ var alvo=col?(x.dest?x.dest.lat+','+x.dest.lng:(cl.end||'')):(x.loja.lat+','+x.loja.lng),tl=h('div','tiles');
+ tl.append(tileA('nav','Rota',alvo?mhMapaLink(alvo):''),tileA('call','Ligar',cl.tel?'tel:'+cl.tel:''));
+ if(cl.tel){var ta=tl.lastChild;ta.removeAttribute('target');ta.removeAttribute('rel')}
+ if(x.chave&&x.rid){var cn=x.chat&&x.chat.k!=='d'&&x.chat.last>(MH['cs'+x.rid]||0),ch=tile('chat','Chat',function(){chat39({titulo:'Chat da entrega',dark:true,como:'d',chave:x.chave,rid:x.rid,req:api,vis:function(n){MH['cs'+x.rid]=n},quick:["Já estou a caminho 🛵", "Estou chegando", "Cheguei! Estou na porta", "Estou na loja, aguardando o pedido", "Não achei o endereço, pode me ajudar?", "Pode me ligar?"]})});if(cn)ch.append(h('span','bd'));tl.append(ch)}
+ tl.style.setProperty('--n',String(tl.children.length));c.append(tl);
+ if(!col)c.append(btnI('sm dg','x','Desistir da entrega',function(){if(confirm('Desistir desta entrega? Ela volta para a fila.'))api('/rivo/desistir',{}).then(function(r){toast(r.ok?'Entrega devolvida à fila.':((r.j&&r.j.erro)||'Não deu.'));mhCarrega()})}));
+ c.append(h('p','cp-hint',MH.gpsErro||'📍 Sua posição é enviada ao cliente e à loja só durante esta entrega. Mantenha o RIVO aberto e a tela ligada.'));
  b.append(c)}
-function render(){if(!ID.ok)return;whoBar();var s=$('#seg');s.textContent='';[['op','Central'],['dr','Entregador']].forEach(function(x){var b=h('button',null,x[1]);b.type='button';b.setAttribute('aria-pressed',M===x[0]);b.onclick=function(){M=x[0];try{history.replaceState(null,'',{dr:'#entregador',lj:'#loja'}[M]||'#')}catch(e){}render()};s.append(b)});
+function render(){if(!ID.ok)return;whoBar();var s=$('#seg');s.textContent='';s.hidden=true;if(M==='dr')M='op';
  side();
  var v=$('#view');v.textContent='';(M==='dr'?V.dr:M==='lj'?V.lj:V[cur])(v);if(M==='dr'||(M==='op'&&cur==='inicio'))mhRivo(v);if(M!=='op'){var hb=btn('sm','? Como funciona',function(){modal('Como funciona',function(f,close){var bx=h('div');tutorial(bx,'ent');f.append(bx,btn('','Fechar',close))})});hb.style.marginBottom='10px';v.prepend(hb)}document.title='RIVO · '+({dr:'Entregador',lj:'Loja'}[M]||'Operação')}
 /* ---- entregas ---- */
@@ -532,13 +665,12 @@ function nova(){modal('Nova entrega',function(f,close){
  f.append(zp.w,zb,sv.w,lj.w,a.w,b.w,q.w,tl.w,r,ex,km.w,kd,v.w,chv,pz.w,pr.w,o.w,er,ac)})}
 function linha(e,perfil){var d=drv(e.drv),c=h('div','card'),hd=h('div','ph');hd.append(h('b',null,'#'+e.n),chip(ST[e.status]),h('span','chip',PORTE[e.porte][0].split(' ')[0]+' · '+e.peso+' kg'),h('span','sp'),h('b',null,R(e.valor)));
  c.append(hd,h('div','m','Coleta: '+e.coleta));if(e.coletaGeo){var gl=h('a','m','Ver o local da loja no mapa'+(e.coletaGeo.acc?' (±'+e.coletaGeo.acc+' m'+(e.coletaGeo.antigo?', posição antiga':'')+')':''));gl.href=mapaLL(e.coletaGeo);gl.target='_blank';gl.rel='noopener';gl.style.cssText='display:block;color:var(--cy)';c.append(gl)}c.append(h('div','m','Entrega: '+e.dest+(e.quem?' · '+e.quem:'')));if(d)c.append(h('div','m','Entregador: '+d.nome));extraLinha(e,c);return c}
-V.inicio=function(v){topAl(v,'op',2);hero(v);var hoje=new Date().toDateString(),n=function(l){return D.ents.filter(function(e){return l.indexOf(e.status)>=0}).length};
- var k=h('div','kpis');[['Aguardando',n(['solicitada'])],['Alertas',nA()],['Em andamento',n(EM)],['Entregues hoje',D.ents.filter(function(e){return e.status==='entregue'&&new Date(e.log[e.log.length-1][1]).toDateString()===hoje}).length],['Entregadores livres',D.drv.filter(livre).length]].forEach(function(x){var c=h('div','card');c.style.marginBottom='0';c.append(h('div','m',x[0]),h('div','kv',String(x[1])));k.append(c)});v.append(k);
- var p=h('div','panel'),ph=h('div','ph');ph.append(h('h2',null,'Entregas ativas'),h('span','sp'),btn('p sm','+ Nova entrega',nova));p.append(ph);
+V.inicio=function(v){topAl(v,'op',2);var hoje=new Date().toDateString(),n=function(l){return D.ents.filter(function(e){return l.indexOf(e.status)>=0}).length};
+ var k=h('div','ks');[['Fila',n(['solicitada']),''],['Em rota',n(EM),''],['Hoje',D.ents.filter(function(e){return e.status==='entregue'&&new Date(e.log[e.log.length-1][1]).toDateString()===hoje}).length,''],['Alertas',nA(),nA()?'al':'']].forEach(function(x){var c=h('div',x[2]);c.append(h('b',null,String(x[1])),h('span',null,x[0]));k.append(c)});v.append(k);
+ var p=h('div','panel'),ph=h('div','ph');ph.append(h('h2',null,'Entregas ativas'),h('span','sp'),btnI('p sm','plus','Nova entrega',nova));p.append(ph);
  var L=D.ents.filter(function(e){return ATIVO.indexOf(e.status)>=0});if(!L.length)p.append(h('div','m','Nenhuma entrega ativa.'));
  L.forEach(function(e){var l=h('div','li'),d=h('div');d.append(h('b',null,'#'+e.n+' · '+e.dest),h('div','m',ST[e.status][0]+' · '+ago(e.log[e.log.length-1][1])));l.append(d,btn('sm','Detalhes',function(){detalhe(e)}));p.append(l)});v.append(p);
- if(!D.drv.length)v.append(h('div','note','Comece cadastrando um entregador na aba Entregadores.'));
- v.append(h('div','note','Pedidos do MESA chegam aqui sozinhos quando o MESA e o RIVO estão abertos no mesmo navegador e no mesmo endereço (modo de teste). Pedidos feitos pelo MiHelp passam pelo servidor (a API do MiHelp na Cloudflare) e aparecem no quadro "Entregas do MiHelp", no topo desta tela.'))};
+ var dt=h('details','note');dt.append(h('summary',null,'Como os pedidos chegam aqui'),h('p',null,'Pedidos do MESA chegam sozinhos quando o MESA e o RIVO estão abertos no mesmo navegador e no mesmo endereço (modo de teste). Pedidos feitos pelo MiHelp passam pelo servidor (a API do MiHelp na Cloudflare) e aparecem no topo desta tela.'));v.append(dt)};
 V.entregas=function(v){var b=h('div','ph'),f=h('div','tabs');f.style.padding='0';[['ativas','Ativas'],['todas','Todas'],['entregue','Entregues'],['cancelada','Canceladas']].forEach(function(x){var p=h('button','pill',x[1]);p.type='button';p.setAttribute('aria-pressed',FLT===x[0]);p.onclick=function(){FLT=x[0];render()};f.append(p)});
  b.append(f,h('span','sp'),btn('p','+ Nova entrega',nova));v.append(b);
  var L=D.ents.filter(function(e){return FLT==='todas'||(FLT==='ativas'?ATIVO.indexOf(e.status)>=0:e.status===FLT)}).sort(function(a,b){return b.ts-a.ts});

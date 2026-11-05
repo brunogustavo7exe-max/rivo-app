@@ -5,5 +5,11 @@
   "backgroundColor": "#0c0e11",
   "server": {
     "androidScheme": "http"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_rivo",
+      "iconColor": "#FFB800"
+    }
   }
 }

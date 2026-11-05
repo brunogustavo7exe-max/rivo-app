@@ -14,6 +14,12 @@ svc = '''
 '''
 if 'RivoMessagingService' not in s:
     s = s.replace('</application>', svc + '    </application>', 1)
+if 'default_notification_icon' not in s:
+    meta = '''
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_rivo" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/rivo_ambar" />
+'''
+    s = s.replace('</application>', meta + '    </application>', 1)
 if 'showWhenLocked' not in s:
     s, n = re.subn(r'<activity(?=[^>]*MainActivity)', '<activity android:showWhenLocked="true" android:turnScreenOn="true"', s, count=1)
     assert n == 1, 'MainActivity não encontrada no AndroidManifest'
@@ -48,3 +54,7 @@ if 'fileprovider' not in m.lower():
 os.makedirs('android/app/src/main/res/xml', exist_ok=True)
 open('android/app/src/main/res/xml/file_paths.xml', 'w', encoding='utf-8').write('<?xml version="1.0" encoding="utf-8"?>\n<paths xmlns:android="http://schemas.android.com/apk/res/android">\n    <external-path name="my_images" path="." />\n    <cache-path name="my_cache_images" path="." />\n</paths>\n')
 print('Patch Android aplicado.')
+
+# cor âmbar usada nas notificações
+os.makedirs('android/app/src/main/res/values', exist_ok=True)
+open('android/app/src/main/res/values/rivo_cores.xml', 'w').write('<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="rivo_ambar">#FFB800</color>\n</resources>\n')
